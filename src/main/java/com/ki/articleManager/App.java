@@ -1,6 +1,7 @@
 package com.ki.articleManager;
 
 import com.ki.controller.ArticleController;
+import com.ki.controller.MemberController;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -52,12 +53,27 @@ public class App {
 
     private static int action(Connection conn, String cmd) {
         ArticleController articleController = new ArticleController(conn);
+        MemberController memberController = new MemberController(conn);
 
-        if (cmd.equals("exit")) {
-            System.out.println("== 프로그램 종료 ==");
-            return -1;
+        if (cmd.equals("article write")) {
+            articleController.doWrite();
+        } else if (cmd.equals("article list")) {
+            articleController.showList();
+        } else if (cmd.startsWith("article modify")) {
+            articleController.doModify(cmd);
+        } else if (cmd.startsWith("article detail")) {
+            articleController.showDetail(cmd);
+        } else if (cmd.startsWith("article delete")) {
+            articleController.doDelete(cmd);
+        } else if (cmd.equals("member join")) {
+            memberController.doJoin();
+        } else if (cmd.equals("member login")) {
+            memberController.doLogin();
+        } else if (cmd.equals("member logout")) {
+            memberController.doLogout();
+        } else {
+            System.out.println("올바르지 않은 명령어입니다.");
         }
-
         return 0;
     }
 }

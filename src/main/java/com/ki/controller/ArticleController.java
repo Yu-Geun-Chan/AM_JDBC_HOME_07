@@ -2,7 +2,9 @@ package com.ki.controller;
 
 import com.ki.articleManager.Container;
 
+import com.ki.dao.ArticleDao;
 import com.ki.dto.Article;
+import com.ki.service.ArticleService;
 import com.ki.util.DBUtil;
 import com.ki.util.SecSql;
 import com.ki.util.Util;
@@ -15,9 +17,11 @@ import java.util.Map;
 
 public class ArticleController extends Controller {
     private Connection conn;
+    private ArticleService articleService;
 
     public ArticleController(Connection conn) {
         this.conn = conn;
+        this.articleService = new ArticleService(conn);
     }
 
     public void doWrite() {
@@ -27,33 +31,14 @@ public class ArticleController extends Controller {
         System.out.print("내용 : ");
         String body = Container.getScanner().nextLine();
 
-        SecSql sql = new SecSql();
-
-        sql.append("INSERT INTO article");
-        sql.append("SET regDate = NOW(),");
-        sql.append("SET updateDate = NOW(),");
-        sql.append("title = '" + title + "',");
-        sql.append("`body` = '" + body + "';");
-
-        int id = DBUtil.insert(conn, sql);
+        int id = articleService.doWrite(title, body);
 
         System.out.printf("%d번 게시글이 작성되었습니다.\n", id);
     }
 
     public void showList() {
         System.out.println("== 게시글 목록 ==");
-
-        SecSql sql = new SecSql();
-
-        List<Article> articles = new ArrayList<Article>();
-
-        sql.append("SELECT * FROM article ORDER BY DESC;");
-
-        List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
-
-        for (Map<String, Object> articleMap : articleListMap) {
-            articles.add(new Article(articleMap));
-        }
+        List<Article> articles = articleService.getArticles();
 
         if (articles.isEmpty()) {
             System.out.println("작성된 게시글이 없습니다.");
@@ -72,6 +57,7 @@ public class ArticleController extends Controller {
 
     public void showDetail(String cmd) {
         System.out.println("== 게시글 상세보기 ==");
+        List<Article> articles = new ArrayList<Article>();
 
         String[] cmdBits = cmd.split(" ");
 
@@ -84,13 +70,7 @@ public class ArticleController extends Controller {
             return;
         }
 
-        SecSql sql = new SecSql();
-
-        List<Article> articles = new ArrayList<Article>();
-
-        sql.append("SELECT * FROM article WHERE id = " + id + ";");
-
-        Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+        Map<String, Object> articleMap = articleService.getArticleById(id);
 
         if (articleMap.isEmpty()) {
             System.out.printf("%d번 게시글은 없습니다.\n", id);
@@ -120,13 +100,13 @@ public class ArticleController extends Controller {
             return;
         }
 
-        SecSql sql = new SecSql();
-
         List<Article> articles = new ArrayList<Article>();
+
+        SecSql sql = new SecSql();
 
         sql.append("SELECT * FROM article WHERE id = " + id + ";");
 
-        Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+        Map<String, Object> articleMap = articleService.getArticleById(id);
 
         if (articleMap.isEmpty()) {
             System.out.printf("%d번 게시글은 없습니다.\n", id);
@@ -142,19 +122,7 @@ public class ArticleController extends Controller {
         System.out.println("내용 : ");
         String newBody = Container.getScanner().nextLine();
 
-        SecSql sql2 = new SecSql();
-
-        sql.append("UPDATE article");
-        sql.append("SET updateDate = NOW(),");
-        if (!newTitle.isEmpty()) {
-            sql.append("title = '" + newTitle + "',");
-        }
-        if (!newBody.isEmpty()) {
-            sql.append("`body` = '" + newBody + "',");
-        }
-        sql.append("WHERE id = " + id + ";");
-
-        DBUtil.update(conn, sql2);
+        articleService.doModify(id, newTitle,newBody);
 
         System.out.printf("%d번 게시글이 수정되었습니다.\n", id);
     }
@@ -168,19 +136,15 @@ public class ArticleController extends Controller {
         try {
             id = Integer.parseInt(cmdBits[2]);
         } catch (NumberFormatException | NullPointerException e) {
-            System.out.println("숫자를 입력하세요");
+            System.out.println("숫자를 입력하세요.");
             return;
         }
-
-        SecSql sql = new SecSql();
 
         List<Article> articles = new ArrayList<Article>();
 
         int foundArticleId = 0;
 
-        sql.append("DELETE * FROM article WHERE id = " + id + ";");
-
-        foundArticleId = DBUtil.delete(conn, sql);
+        foundArticleId = articleService.doDelete(id);
 
         if (foundArticleId == 0) {
             System.out.printf("%d번 게시글은 없습니다.\n", id);
