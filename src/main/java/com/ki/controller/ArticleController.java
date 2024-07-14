@@ -1,11 +1,8 @@
 package com.ki.controller;
 
 import com.ki.articleManager.Container;
-
-import com.ki.dao.ArticleDao;
 import com.ki.dto.Article;
 import com.ki.service.ArticleService;
-import com.ki.util.DBUtil;
 import com.ki.util.SecSql;
 import com.ki.util.Util;
 

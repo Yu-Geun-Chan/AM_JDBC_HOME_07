@@ -74,16 +74,7 @@ public class MemberController extends Controller{
             }
             break;
         }
-
-        SecSql sql = new SecSql();
-
-        sql.append("INSERT INTO from `member`");
-        sql.append("SET regDate = NOW(),");
-        sql.append("loginId= '" + loginId + "',");
-        sql.append("loginPw= '" + loginPw + "',");
-        sql.append("`name`= '" + name + "';");
-
-        DBUtil.insert(conn, sql);
+        memberService.doJoin(loginId, loginPw, name);
 
         System.out.printf("[%s]님 회원가입을 환영합니다.\n", name);
     }
@@ -94,8 +85,7 @@ public class MemberController extends Controller{
             System.out.println("로그아웃 후 이용해주세요.");
             return;
         }
-
-        List<Member> members = new ArrayList<Member>();
+        List<Member> members = memberService.foundMember();
 
         while (true) {
             System.out.printf("아이디 : ");
@@ -114,14 +104,6 @@ public class MemberController extends Controller{
                 continue;
             }
 
-            SecSql sql = new SecSql();
-            sql.append("SELECT * FROM `member`;");
-
-            List<Map<String, Object>> memberListMap = DBUtil.selectRows(conn, sql);
-
-            for (Map<String, Object> memberMap : memberListMap) {
-                members.add(new Member(memberMap));
-            }
             Member member = null;
 
             for (Member m : members) {
@@ -141,16 +123,16 @@ public class MemberController extends Controller{
                 continue;
             }
             loginedMember = member;
-            System.out.printf("[%s]님 환영합니다\n", loginedMember.getName());
+            System.out.printf("[%s]님 환영합니다.\n", loginedMember.getName());
             break;
         }
     }
     public void doLogout() {
-        System.out.println("== 로그아웃 ==");
-
         if (loginedMember == null) {
             System.out.println("로그인 후 이용해주세요.");
         }
         loginedMember = null;
+
+        System.out.println("로그아웃 되었습니다.");
     }
 }

@@ -3,11 +3,6 @@ package com.ki.articleManager;
 import java.util.Scanner;
 
 public class Container {
-
-    public static Scanner getScanner() {
-        return sc;
-    }
-
     public static Scanner sc;
 
     public static void init() {
@@ -18,4 +13,7 @@ public class Container {
         sc.close();
     }
 
+    public static Scanner getScanner() {
+        return sc;
+    }
 }

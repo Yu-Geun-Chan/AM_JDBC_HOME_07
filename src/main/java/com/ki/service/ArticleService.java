@@ -2,11 +2,8 @@ package com.ki.service;
 
 import com.ki.dao.ArticleDao;
 import com.ki.dto.Article;
-import com.ki.util.DBUtil;
-import com.ki.util.SecSql;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
