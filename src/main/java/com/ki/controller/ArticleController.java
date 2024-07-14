@@ -3,11 +3,9 @@ package com.ki.controller;
 import com.ki.articleManager.Container;
 import com.ki.dto.Article;
 import com.ki.service.ArticleService;
-import com.ki.util.SecSql;
-import com.ki.util.Util;
+import com.ki.util.DateUtil;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +43,7 @@ public class ArticleController extends Controller {
         System.out.println("  번호  /    작성일   /     제목     /     내용    ");
         System.out.println("=".repeat(60));
         for (Article article : articles) {
-            if (Util.getNow().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
+            if (DateUtil.getNow().split(" ")[0].equals(article.getRegDate().split(" ")[0])) {
                 System.out.printf("   %d   /    %s    /       %s       /      %s     \n", article.getId(), article.getRegDate().split(" ")[1], article.getTitle(), article.getBody());
             } else
                 System.out.printf("   %d   /    %s     /      %s      /      %s     \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
@@ -54,7 +52,6 @@ public class ArticleController extends Controller {
 
     public void showDetail(String cmd) {
         System.out.println("== 게시글 상세보기 ==");
-        List<Article> articles = new ArrayList<Article>();
 
         String[] cmdBits = cmd.split(" ");
 
@@ -97,12 +94,6 @@ public class ArticleController extends Controller {
             return;
         }
 
-        List<Article> articles = new ArrayList<Article>();
-
-        SecSql sql = new SecSql();
-
-        sql.append("SELECT * FROM article WHERE id = " + id + ";");
-
         Map<String, Object> articleMap = articleService.getArticleById(id);
 
         if (articleMap.isEmpty()) {
@@ -136,8 +127,6 @@ public class ArticleController extends Controller {
             System.out.println("숫자를 입력하세요.");
             return;
         }
-
-        List<Article> articles = new ArrayList<Article>();
 
         int foundArticleId = 0;
 

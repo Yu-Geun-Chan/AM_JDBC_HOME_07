@@ -3,21 +3,17 @@ package com.ki.controller;
 import com.ki.articleManager.Container;
 import com.ki.dto.Member;
 import com.ki.service.MemberService;
-import com.ki.util.DBUtil;
-import com.ki.util.SecSql;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MemberController extends Controller{
     private Connection conn;
-
     private MemberService memberService;
 
     public MemberController(Connection conn) {
         this.conn = conn;
+        this.memberService = new MemberService(conn);
     }
 
     public void doJoin() {
@@ -85,7 +81,7 @@ public class MemberController extends Controller{
             System.out.println("로그아웃 후 이용해주세요.");
             return;
         }
-        List<Member> members = memberService.foundMember();
+        List<Member> members = memberService.members();
 
         while (true) {
             System.out.printf("아이디 : ");

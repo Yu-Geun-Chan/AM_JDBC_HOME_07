@@ -22,7 +22,7 @@ public class MemberService {
         memberDao.doJoin(loginId, loginPw, name);
     }
 
-    public List<Member> foundMember() {
-        return memberDao.foundMember();
+    public List<Member> members() {
+        return memberDao.members();
     }
 }

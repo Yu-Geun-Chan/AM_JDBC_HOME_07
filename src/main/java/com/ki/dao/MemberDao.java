@@ -33,7 +33,7 @@ public class MemberDao {
         sql.append("`name`= '" + name + "';");
     }
 
-    public List<Member> foundMember() {
+    public List<Member> members() {
         SecSql sql = new SecSql();
 
         sql.append("SELECT * FROM `member`;");
