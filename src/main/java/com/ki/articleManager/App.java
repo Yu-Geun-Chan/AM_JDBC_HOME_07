@@ -10,11 +10,16 @@ import java.sql.SQLException;
 public class App {
 
     public void run() {
-        System.out.println("== 프로그램 시작 ==");
+        System.out.println("== 프로그램 실행 ==");
 
         while (true) {
-            System.out.print("명령어 > ");
             String cmd = Container.getScanner().nextLine().trim();
+            System.out.print("명령어) ");
+
+            if (cmd.isEmpty()) {
+                System.out.println("명령어를 입력하세요.");
+                continue;
+            }
 
             Connection conn = null;
 
@@ -52,27 +57,30 @@ public class App {
     }
 
     private static int action(Connection conn, String cmd) {
+        if (cmd.equals("exit")) {
+            return -1;
+        }
+
         ArticleController articleController = new ArticleController(conn);
         MemberController memberController = new MemberController(conn);
-
         if (cmd.equals("article write")) {
             articleController.doWrite();
-        } else if (cmd.equals("article list")) {
-            articleController.showList();
-        } else if (cmd.startsWith("article modify")) {
-            articleController.doModify(cmd);
+        } else if (cmd.startsWith("article list")) {
+            articleController.showList(cmd);
         } else if (cmd.startsWith("article detail")) {
             articleController.showDetail(cmd);
+        } else if (cmd.startsWith("article modify")) {
+            articleController.doModify(cmd);
         } else if (cmd.startsWith("article delete")) {
-            articleController.doDelete(cmd);
+            articleController.doDelte(cmd);
         } else if (cmd.equals("member join")) {
-            memberController.doJoin();
+            memberController.dojoin();
         } else if (cmd.equals("member login")) {
             memberController.doLogin();
         } else if (cmd.equals("member logout")) {
             memberController.doLogout();
         } else {
-            System.out.println("올바르지 않은 명령어입니다.");
+            System.out.println("올바르지 않은 명령어 입니다.");
         }
         return 0;
     }
